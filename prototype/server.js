@@ -1,8 +1,8 @@
 const express = require('express');
-const fetch = require('node-fetch');
+const fetch = import('node-fetch');
 const app = express();
 
-const apiKey = '9F8C1996E787E164C62A6FB2C317AA21'; 
+const apiKey = 'd2ae45b1e88742959ed68671b3217c20'; 
 
 // set the view engine to ejs
 app.set('view engine', 'ejs');
@@ -23,7 +23,7 @@ app.get('/search', async (req, res) => {
       'x-rapidapi-host': 'accujazz-rawg-video-games-database.p.rapidapi.com',
       'x-rapidapi-key': apiKey,
       'useQueryString': true,
-      'User-Agent': 'Mozilla/5.0'
+      'User-Agent': 'Chrome/93.0.4577.63'
     }
   });
 
