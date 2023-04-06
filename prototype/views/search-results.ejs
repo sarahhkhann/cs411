@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search Results</title>
+</head>
+<body>
+    <% if (games && games.length > 0) { %>
+        <h2>Search Results:</h2>
+        <ul>
+        <% games.forEach((game) => { %>
+            <li><%= game.name %> - <%= game.released %></li>
+        <% }) %>
+        </ul>
+    <% } else { %>
+        <h2>No results found</h2>
+    <% } %>
+</body>
+</html>
