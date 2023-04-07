@@ -19,15 +19,15 @@ app.get('/search', async (req, res) => {
   const userSummary = steam.getUserSummary(steam_id)
     .then(userSummary => {
       console.log(userSummary);
+      const user_avatar = userSummary.avatar.medium;
+      const user_name = userSummary.nickname;
+
+      console.log(user_avatar);
+      console.log(user_name);
     })
     .catch(error => {
       console.error(error);
     });
-
-  const user_avatar = userSummary.avatar;
-  const user_name = userSummary.nickname;
-  console.log(user_avatar);
-  console.log(user_name);
 });
 
 // start server
