@@ -13,6 +13,8 @@ app.get('/', (req, res) => {
   res.render('index');
 });
 
+//Alex's steamID to use for testing => 76561198076491240 
+//another random one we can use => 76561198146931523
 // define route to handle search form submission
 app.get('/search', async (req, res) => {
   const steam_id = req.query.steam_id;
