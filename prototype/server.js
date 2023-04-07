@@ -1,5 +1,5 @@
 const express = require('express');
-const fetch = require('node-fetch');
+import fetch from "node-fetch";
 const app = express();
 
 const apiKey = 'd2ae45b1e88742959ed68671b3217c20'; 
