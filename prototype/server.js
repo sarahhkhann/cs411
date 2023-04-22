@@ -7,13 +7,16 @@ const SteamAPI = require('steamapi');
 const steam = new SteamAPI(process.env.STEAM_API_KEY);
 const RapidAPIKey = process.env.RAPID_API_KEY;
 
+
+const GOOGLE_CLIENT_ID = '49445260514-bvouskakjlmctdsm3o341arcoid6fqts.apps.googleusercontent.com'
+
 // set the view engine to ejs
 app.set('view engine', 'ejs');
 
 // define route for homepage
 app.get('/', (req, res) => {
-  const client_id = process.env.GOOGLE_CLIENT_ID; // 'your_client_id
-  const redirect_uri = 'your_redirect_uri';
+  const client_id = '49445260514-bvouskakjlmctdsm3o341arcoid6fqts.apps.googleusercontent.com'; // 'your_client_id
+  const redirect_uri = 'http://localhost:3000/auth/google/callback';
   res.render('index', { client_id, redirect_uri});
 });
 
@@ -82,6 +85,41 @@ fetch(url, options)
 
 // const port = process.env.TEST;
 // console.log(`Your port is ${port}`);
+
+
+// define route for Google authentication callback
+app.get('/auth/google/callback', async (req, res) => {
+  const code = req.query.code;
+
+  // exchange the authorization code for an access token
+  const { access_token } = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: new URLSearchParams({
+      code: code,
+      client_id: GOOGLE_CLIENT_ID,
+      client_secret: process.env.GOOGLE_CLIENT_SECRET,
+      redirect_uri: 'http://localhost:3000/auth/google/callback',
+      grant_type: 'authorization_code'
+    })
+  }).then(res => res.json());
+
+  // use the access token to retrieve the user's profile information
+  const { email, given_name, family_name } = await fetch('https://www.googleapis.com/oauth2/v1/userinfo', {
+    headers: {
+      'Authorization': `Bearer ${access_token}`
+    }
+  }).then(res => res.json());
+
+  
+  // render the user profile information
+  res.render('profile', { email, given_name, family_name });
+});
+
+
+
 
 // start server
 app.listen(3000, () => {
