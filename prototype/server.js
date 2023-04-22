@@ -12,7 +12,7 @@ app.set('view engine', 'ejs');
 
 // define route for homepage
 app.get('/', (req, res) => {
-  const client_id = process.env.client_id; // 'your_client_id
+  const client_id = process.env.GOOGLE_CLIENT_ID; // 'your_client_id
   const redirect_uri = 'your_redirect_uri';
   res.render('index', { client_id, redirect_uri});
 });
