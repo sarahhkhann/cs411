@@ -12,7 +12,9 @@ app.set('view engine', 'ejs');
 
 // define route for homepage
 app.get('/', (req, res) => {
-  res.render('index');
+  const client_id = 'your_google_client_id';
+  const redirect_uri = 'your_redirect_uri';
+  res.render('index', { client_id, redirect_uri});
 });
 
 //Alex's steamID to use for testing => 76561198076491240 
@@ -33,39 +35,50 @@ app.get('/search', async (req, res) => {
       console.error(error);
     });
 
-    const userRecentGames = steam.getUserRecentGames(steam_id)
-      .then(userRecentGames => {
-        for (let i = 0; i < userRecentGames.length; i++) {
-          console.log(userRecentGames[i].name);
-        }
-        //console.log(userRecentGames);
-        //const userGame1 = userRecentGames[0].name;
-        // const user_name = userSummary.nickname;
-        //console.log(userGame1);
-        // console.log(user_name);
-      })
-      .catch(error => {
-        console.error(error);
-      });
-
-
-
+  const userRecentGames = steam.getUserRecentGames(steam_id)
+    .then(userRecentGames => {
+      for (let i = 0; i < userRecentGames.length; i++) {
+        console.log(userRecentGames[i].name);
+      }
+      //console.log(userRecentGames);
+      //const userGame1 = userRecentGames[0].name;
+      // const user_name = userSummary.nickname;
+      //console.log(userGame1);
+      // console.log(user_name);
+    })
+    .catch(error => {
+      console.error(error);
+    });
 });
 
-const url = 'https://videogames-news2.p.rapidapi.com/videogames_news/search_news?query=GTA';
-
+//this is for testing, doesnt use players recent games
+const url = 'https://videogames-news2.p.rapidapi.com/videogames_news/recent';
 const options = {
   method: 'GET',
   headers: {
-    'X-RapidAPI-Key': '3a0658e8bdmshacb124ac4515456p101be7jsna2b797243cc4',
+    'X-RapidAPI-Key': RapidAPIKey,
     'X-RapidAPI-Host': 'videogames-news2.p.rapidapi.com'
   }
 };
-
 fetch(url, options)
 	.then(res => res.json())
 	.then(json => console.log(json))
 	.catch(err => console.error('error:' + err));
+  
+// const url = 'https://videogames-news2.p.rapidapi.com/videogames_news/search_news?query=GTA';
+
+// const options = {
+//   method: 'GET',
+//   headers: {
+//     'X-RapidAPI-Key': '3a0658e8bdmshacb124ac4515456p101be7jsna2b797243cc4',
+//     'X-RapidAPI-Host': 'videogames-news2.p.rapidapi.com'
+//   }
+// };
+
+// fetch(url, options)
+// 	.then(res => res.json())
+// 	.then(json => console.log(json))
+// 	.catch(err => console.error('error:' + err));
 
 // const port = process.env.TEST;
 // console.log(`Your port is ${port}`);
