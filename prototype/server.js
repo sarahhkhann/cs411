@@ -8,7 +8,7 @@ const steam = new SteamAPI(process.env.STEAM_API_KEY);
 const RapidAPIKey = process.env.RAPID_API_KEY;
 
 
-const GOOGLE_CLIENT_ID = '49445260514-bvouskakjlmctdsm3o341arcoid6fqts.apps.googleusercontent.com'
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 
 // set the view engine to ejs
 app.set('view engine', 'ejs');
