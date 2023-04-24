@@ -102,7 +102,8 @@ async function RetrieveUserData(steam_id){
   } catch(err) {
     console.error(err);
   }
-  console.log('\n\n');
+
+  // console.log('\n\n');
   return output;
 }
 
