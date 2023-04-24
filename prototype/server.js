@@ -25,6 +25,8 @@ app.get('/', (req, res) => {
 // define route to handle search form submission
 app.get('/search', async (req, res) => {
   const steam_id = req.query.steam_id;
+  
+  //can see the format of the data returned by the following function in the readme in the docs folder
   const data = await RetrieveUserData(steam_id);
 });
 
