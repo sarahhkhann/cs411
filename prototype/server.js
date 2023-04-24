@@ -25,7 +25,7 @@ app.get('/', (req, res) => {
 // define route to handle search form submission
 app.get('/search', async (req, res) => {
   const steam_id = req.query.steam_id;
-  RetrieveUserData(steam_id);
+  const data = await RetrieveUserData(steam_id);
 });
 
 // const port = process.env.TEST;
@@ -64,10 +64,10 @@ app.get('/auth/google/callback', async (req, res) => {
 });
 
 //for testing
-RetrieveUserData('76561198076491240').then(out => {
-  console.log(out);
-  console.log(out.userRecentGames['Deep Rock Galactic']);
-});
+// RetrieveUserData('76561198076491240').then(out => {
+//   console.log(out);
+//   console.log(out.userRecentGames['Deep Rock Galactic']);
+// });
 
 //gets user summary and recent games played
 async function RetrieveUserData(steam_id){
