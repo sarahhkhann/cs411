@@ -15,7 +15,7 @@ app.set('view engine', 'ejs');
 
 // define route for homepage
 app.get('/', (req, res) => {
-  const client_id = '49445260514-bvouskakjlmctdsm3o341arcoid6fqts.apps.googleusercontent.com'; // 'your_client_id
+  const client_id = GOOGLE_CLIENT_ID; // 'your_client_id
   const redirect_uri = 'http://localhost:3000/auth/google/callback';
   res.render('index', { client_id, redirect_uri});
 });
