@@ -8,14 +8,14 @@ const steam = new SteamAPI(process.env.STEAM_API_KEY);
 const RapidAPIKey = process.env.RAPID_API_KEY;
 
 
-const GOOGLE_CLIENT_ID = '49445260514-bvouskakjlmctdsm3o341arcoid6fqts.apps.googleusercontent.com'
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 
 // set the view engine to ejs
 app.set('view engine', 'ejs');
 
 // define route for homepage
 app.get('/', (req, res) => {
-  const client_id = '49445260514-bvouskakjlmctdsm3o341arcoid6fqts.apps.googleusercontent.com'; // 'your_client_id
+  const client_id = GOOGLE_CLIENT_ID; // 'your_client_id
   const redirect_uri = 'http://localhost:3000/auth/google/callback';
   res.render('index', { client_id, redirect_uri});
 });
@@ -25,63 +25,10 @@ app.get('/', (req, res) => {
 // define route to handle search form submission
 app.get('/search', async (req, res) => {
   const steam_id = req.query.steam_id;
-  const userSummary = steam.getUserSummary(steam_id)
-    .then(userSummary => {
-      // console.log(userSummary);
-      const user_avatar = userSummary.avatar.medium;
-      const user_name = userSummary.nickname;
-
-      console.log(user_avatar);
-      console.log(user_name);
-    })
-    .catch(error => {
-      console.error(error);
-    });
-
-  const userRecentGames = steam.getUserRecentGames(steam_id)
-    .then(userRecentGames => {
-      for (let i = 0; i < userRecentGames.length; i++) {
-        console.log(userRecentGames[i].name);
-      }
-      //console.log(userRecentGames);
-      //const userGame1 = userRecentGames[0].name;
-      // const user_name = userSummary.nickname;
-      //console.log(userGame1);
-      // console.log(user_name);
-    })
-    .catch(error => {
-      console.error(error);
-    });
-});
-
-//this is for testing, doesnt use players recent games
-const url = 'https://videogames-news2.p.rapidapi.com/videogames_news/recent';
-const options = {
-  method: 'GET',
-  headers: {
-    'X-RapidAPI-Key': RapidAPIKey,
-    'X-RapidAPI-Host': 'videogames-news2.p.rapidapi.com'
-  }
-};
-fetch(url, options)
-	.then(res => res.json())
-	.then(json => console.log(json))
-	.catch(err => console.error('error:' + err));
   
-// const url = 'https://videogames-news2.p.rapidapi.com/videogames_news/search_news?query=GTA';
-
-// const options = {
-//   method: 'GET',
-//   headers: {
-//     'X-RapidAPI-Key': '3a0658e8bdmshacb124ac4515456p101be7jsna2b797243cc4',
-//     'X-RapidAPI-Host': 'videogames-news2.p.rapidapi.com'
-//   }
-// };
-
-// fetch(url, options)
-// 	.then(res => res.json())
-// 	.then(json => console.log(json))
-// 	.catch(err => console.error('error:' + err));
+  //can see the format of the data returned by the following function in the readme in the docs folder
+  const data = await RetrieveUserData(steam_id);
+});
 
 // const port = process.env.TEST;
 // console.log(`Your port is ${port}`);
@@ -118,7 +65,91 @@ app.get('/auth/google/callback', async (req, res) => {
   res.render('profile', { email, given_name, family_name });
 });
 
+//for testing
+// RetrieveUserData('76561198076491240').then(out => {
+//   console.log(out);
+//   console.log(out.userRecentGames['Deep Rock Galactic']);
+// });
 
+//gets user summary and recent games played
+async function RetrieveUserData(steam_id){
+  output = {};
+  output.userRecentGames = {};
+
+  //retrieve user data, profile pic, name, etc...
+  try{
+    const userSummary = await steam.getUserSummary(steam_id);
+    output.userAvatar = userSummary.avatar.medium;
+    output.userName = userSummary.nickname;
+    output.userProfileURL = userSummary.url;
+    //console.log(userSummary);
+  } catch (err) {
+    console.error(err);
+  }
+
+  //retrieve user recent games
+  try{
+    const userRecentGames = await steam.getUserRecentGames(steam_id);
+    for (let i = 0; i < userRecentGames.length; i++) {
+      //uncomment this to get news for each game, using the other function for testing so we dont waste api calls
+
+      // const out = await RetrieveGameNews(userRecentGames[i].name);
+      // output.userRecentGames[userRecentGames[i].name] = out;
+
+      const out = await RetrieveRecentNews();
+      output.userRecentGames[userRecentGames[i].name] = out;
+    }
+  } catch(err) {
+    console.error(err);
+  }
+
+  // console.log('\n\n');
+  return output;
+}
+
+//retrieves game news from specified game title
+async function RetrieveGameNews(gameTitle) {
+  const url = `https://videogames-news2.p.rapidapi.com/videogames_news/search_news?query=${gameTitle}`;
+
+  const options = {
+    method: 'GET',
+    headers: {
+      'X-RapidAPI-Key': RapidAPIKey,
+      'X-RapidAPI-Host': 'videogames-news2.p.rapidapi.com'
+    }
+  };
+
+  try {
+    const response = await fetch(url, options);
+    const json = await response.json();
+    return json;
+  } catch (err) {
+    console.error('error:', err);
+    return null;
+  }
+}
+
+//this is for testing, doesnt use players recent games
+async function RetrieveRecentNews() {
+  const url = 'https://videogames-news2.p.rapidapi.com/videogames_news/recent';
+
+  const options = {
+    method: 'GET',
+    headers: {
+      'X-RapidAPI-Key': RapidAPIKey,
+      'X-RapidAPI-Host': 'videogames-news2.p.rapidapi.com'
+    }
+  };
+
+  try {
+    const response = await fetch(url, options);
+    const json = await response.json();
+    return json;
+  } catch (err) {
+    console.error('error:', err);
+    return null;
+  }
+}
 
 
 // start server
