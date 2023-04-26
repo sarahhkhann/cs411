@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>User Data</title>
+  </head>
+  <body>
+    <h1>User Data</h1>
+    <img src="<%= userData.userAvatar %>" alt="User Avatar">
+    <p>Username: <%= userData.userName %></p>
+    <p>Profile URL: <%= userData.userProfileURL %></p>
+    <h2>Recent Games</h2>
+    <ul>
+      <% Object.entries(userData.userRecentGames).forEach(([gameName, articleObject]) => { %>
+        <h3><%= gameName %> - </h3>
+        <% articleObject.forEach(article => { %>
+          <h4><%= article.title %> </h4>
+          <li><%= article.date %> </li>
+          <li><%= article.description %> </li>
+          <li><%= article.link %> </li>
+        <% }); %>
+      <% }); %>
+    </ul>
+  </body>
+</html>
