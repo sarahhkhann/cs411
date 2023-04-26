@@ -6,13 +6,16 @@ require('dotenv').config();
 const SteamAPI = require('steamapi');
 const steam = new SteamAPI(process.env.STEAM_API_KEY);
 const RapidAPIKey = process.env.RAPID_API_KEY;
-
+const bcrypt = require('bcrypt');
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 const GOOGLE_CLIENT_ID = '49445260514-bvouskakjlmctdsm3o341arcoid6fqts.apps.googleusercontent.com'
 
 // set the view engine to ejs
 app.set('view engine', 'ejs');
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // define route for homepage
 app.get('/', (req, res) => {
   const client_id = '49445260514-bvouskakjlmctdsm3o341arcoid6fqts.apps.googleusercontent.com'; // 'your_client_id
@@ -20,39 +23,169 @@ app.get('/', (req, res) => {
   res.render('index', { client_id, redirect_uri});
 });
 
+// define route for regsitration page 
+app.get('/register', function(req, res) {
+  res.render('register');
+});
+
+// define route for login page 
+app.get('/login', function(req, res) {
+  res.render('login');
+});
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////DATABASE////////////////////////////////////////////////////////
+const sqlite3 = require('sqlite3').verbose();
+
+// open the database connection
+const db = new sqlite3.Database('mydatabase.db');
+
+// create the users table
+db.serialize(() => {
+  db.run(`
+    CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY,
+      name TEXT,
+      email TEXT,
+      password TEXT,
+      confirm_password TEXT
+    )
+  `, (err) => {
+    if (err) {
+      console.error(err.message);
+    } else {
+      console.log('Users table created successfully.');
+    }
+  });
+});
+
+
+// handle the form data and insert it into the database
+app.post('/register', (req, res) => {
+  // Check if the request body exists and contains the expected properties
+  if (!req.body || !req.body.name || !req.body.email || !req.body.password || !req.body.confirm_password) {
+    res.status(400).send('Invalid request bodyyyyy.');
+    return;
+  }
+
+  // Get the form data from the request body
+  const { name, email, password, confirm_password } = req.body;
+
+  // Check if the passwords match
+  if (password !== confirm_password) {
+    res.status(400).send('Passwords do not match.');
+    return;
+  }
+
+  // Hash the password and store it in the database
+  bcrypt.hash(password, 10, (err, hashedPassword) => {
+    if (err) {
+      console.error(err.message);
+      res.send('Error registering user.');
+    } else {
+      db.run('INSERT INTO users (name, email, password) VALUES (?, ?, ?)', [name, email, hashedPassword], (err) => {
+        if (err) {
+          console.error(err.message);
+          res.send('Error registering user.');
+        } else {
+          res.render('profile');
+        }
+      });
+    }
+  });
+});
+
+// close the database connection when the application is done
+process.on('SIGINT', () => {
+  db.close((err) => {
+    if (err) {
+      console.error(err.message);
+    }
+    console.log('Closed the database connection.');
+    process.exit(0);
+  });
+});
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////handling existing users///////////////////////////////////////////////////////
+// handle login request
+app.post('/login', (req, res) => {
+  // Check if the request body exists and contains the expected properties
+  if (!req.body || !req.body.email || !req.body.password) {
+    console.log(Here)
+    res.status(400).send('invalid request bodyyyy.');
+    return;
+  }
+
+  // Get the login data from the request body
+  const { email, password } = req.body;
+
+  // Check if user with given email exists in the database
+  db.get('SELECT * FROM users WHERE email = ?', email, (err, row) => {
+    if (err) {
+      console.error(err.message);
+      res.send('Error logging in.');
+    } else if (!row) {
+      // User with given email does not exist in the database
+      res.status(401).send('Invalid email or password.');
+    } else {
+      // User with given email exists, compare passwords
+      bcrypt.compare(password, row.password, (err, result) => {
+        if (result) {
+          // Passwords match, login successful
+          //res.send('Login successful.');
+          res.render('profile')
+        } else {
+          // Passwords do not match
+          res.status(401).send('Invalid email or password.');
+        }
+      });
+    }
+  });
+});
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
 //Alex's steamID to use for testing => 76561198076491240 
 //another random one we can use => 76561198146931523
 // define route to handle search form submission
-app.get('/search', async (req, res) => {
-  const steam_id = req.query.steam_id;
+/*app.post('/steam', async (req, res) => {
+  const steam_id = req.body.steam_id;
+  console.log(steam_id)
   const userSummary = steam.getUserSummary(steam_id)
-    .then(userSummary => {
-      // console.log(userSummary);
-      const user_avatar = userSummary.avatar.medium;
-      const user_name = userSummary.nickname;
+  .then(userSummary => {
+    console.log("Hello world");
+    const user_avatar = userSummary.avatar.medium;
+    const user_name = userSummary.nickname;
 
-      console.log(user_avatar);
-      console.log(user_name);
-    })
-    .catch(error => {
-      console.error(error);
-    });
+    console.log(user_avatar);
+    console.log(user_name);
+  })
+  .catch(error => {
+    console.error(error);
+  });
+
 
   const userRecentGames = steam.getUserRecentGames(steam_id)
     .then(userRecentGames => {
       for (let i = 0; i < userRecentGames.length; i++) {
         console.log(userRecentGames[i].name);
       }
-      //console.log(userRecentGames);
-      //const userGame1 = userRecentGames[0].name;
-      // const user_name = userSummary.nickname;
-      //console.log(userGame1);
-      // console.log(user_name);
     })
     .catch(error => {
       console.error(error);
     });
 });
+
+
+
+
+
+
 
 //this is for testing, doesnt use players recent games
 const url = 'https://videogames-news2.p.rapidapi.com/videogames_news/recent';
@@ -67,59 +200,98 @@ fetch(url, options)
 	.then(res => res.json())
 	.then(json => console.log(json))
 	.catch(err => console.error('error:' + err));
-  
-// const url = 'https://videogames-news2.p.rapidapi.com/videogames_news/search_news?query=GTA';
+  */
 
-// const options = {
-//   method: 'GET',
-//   headers: {
-//     'X-RapidAPI-Key': '3a0658e8bdmshacb124ac4515456p101be7jsna2b797243cc4',
-//     'X-RapidAPI-Host': 'videogames-news2.p.rapidapi.com'
-//   }
-// };
+//gets user summary and recent games played
+async function RetrieveUserData(steam_id){
+  output = {};
+  output.userRecentGames = {};
 
-// fetch(url, options)
-// 	.then(res => res.json())
-// 	.then(json => console.log(json))
-// 	.catch(err => console.error('error:' + err));
+  //retrieve user data, profile pic, name, etc...
+  try{
+    const userSummary = await steam.getUserSummary(steam_id);
+    output.userAvatar = userSummary.avatar.medium;
+    output.userName = userSummary.nickname;
+    output.userProfileURL = userSummary.url;
+    //console.log(userSummary);
+  } catch (err) {
+    console.error(err);
+  }
 
-// const port = process.env.TEST;
-// console.log(`Your port is ${port}`);
+  //retrieve user recent games
+  try{
+    const userRecentGames = await steam.getUserRecentGames(steam_id);
+    for (let i = 0; i < userRecentGames.length; i++) {
+      //uncomment this to get news for each game, using the other function for testing so we dont waste api calls
 
+      // const out = await RetrieveGameNews(userRecentGames[i].name);
+      // output.userRecentGames[userRecentGames[i].name] = out;
 
-// define route for Google authentication callback
-app.get('/auth/google/callback', async (req, res) => {
-  const code = req.query.code;
-
-  // exchange the authorization code for an access token
-  const { access_token } = await fetch('https://oauth2.googleapis.com/token', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    body: new URLSearchParams({
-      code: code,
-      client_id: GOOGLE_CLIENT_ID,
-      client_secret: process.env.GOOGLE_CLIENT_SECRET,
-      redirect_uri: 'http://localhost:3000/auth/google/callback',
-      grant_type: 'authorization_code'
-    })
-  }).then(res => res.json());
-
-  // use the access token to retrieve the user's profile information
-  const { email, given_name, family_name } = await fetch('https://www.googleapis.com/oauth2/v1/userinfo', {
-    headers: {
-      'Authorization': `Bearer ${access_token}`
+      const out = await RetrieveRecentNews();
+      output.userRecentGames[userRecentGames[i].name] = out;
     }
-  }).then(res => res.json());
+  } catch(err) {
+    console.error(err);
+  }
 
+  // console.log('\n\n');
+  return output;
+}
+
+//retrieves game news from specified game title
+async function RetrieveGameNews(gameTitle) {
+  const url = `https://videogames-news2.p.rapidapi.com/videogames_news/search_news?query=${gameTitle}`;
+
+  const options = {
+    method: 'GET',
+    headers: {
+      'X-RapidAPI-Key': RapidAPIKey,
+      'X-RapidAPI-Host': 'videogames-news2.p.rapidapi.com'
+    }
+  };
+
+  try {
+    const response = await fetch(url, options);
+    const json = await response.json();
+    return json;
+  } catch (err) {
+    console.error('error:', err);
+    return null;
+  }
+}
+
+//this is for testing, doesnt use players recent games
+async function RetrieveRecentNews() {
+  const url = 'https://videogames-news2.p.rapidapi.com/videogames_news/recent';
+
+  const options = {
+    method: 'GET',
+    headers: {
+      'X-RapidAPI-Key': RapidAPIKey,
+      'X-RapidAPI-Host': 'videogames-news2.p.rapidapi.com'
+    }
+  };
+
+  try {
+    const response = await fetch(url, options);
+    const json = await response.json();
+    return json;
+  } catch (err) {
+    console.error('error:', err);
+    return null;
+  }
+}
+
+app.post('/steam', async (req, res) => {
+  const steam_id = req.body.steam_id;
+  console.log(steam_id)
+
+  // Call the RetrieveUserData function with the steam_id
+  const userData = await RetrieveUserData(steam_id);
   
-  // render the user profile information
-  res.render('profile', { email, given_name, family_name });
+  // Render the EJS template with the retrieved user data
+  res.render('user', { userData: userData });
 });
-
-
-
 
 // start server
 app.listen(3000, () => {
