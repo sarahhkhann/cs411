@@ -10,6 +10,9 @@ const RapidAPIKey = process.env.RAPID_API_KEY;
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 
+const Datastore = require('nedb');
+const db = new Datastore({ filename: 'users.db', autoload: true })
+
 // set the view engine to ejs
 app.set('view engine', 'ejs');
 
@@ -63,6 +66,22 @@ app.get('/auth/google/callback', async (req, res) => {
   
   // render the user profile information
   res.render('profile', { email, given_name, family_name });
+
+  // create a user object to store into NeDB database
+  const user =
+  {
+    email: email,
+    firstName: given_name,
+    lastName: family_name
+  };
+
+  // insert user object into database
+  db.insert(user, (err, newUser) =>
+  {
+    if(err) console.error(err);
+    console.log('User data stored:', newUser);
+  })
+
 });
 
 //for testing
