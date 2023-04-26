@@ -4,22 +4,30 @@
     <title>User Data</title>
     <style>
       body {
-        font-family: Arial, sans-serif;
+        background-color: #171a21;
+        color: #cdd5e0;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
       }
       
       h1 {
         margin-top: 50px;
         text-align: center;
+        font-size: 48px;
+        font-weight: 400;
       }
       
       img {
         display: block;
-        margin: 20px auto;
-        max-width: 300px;
+        margin: 0 auto;
+        max-width: 200px;
+        border-radius: 50%;
+        border: 3px solid #fff;
       }
       
       p {
         margin: 10px 0;
+        font-size: 18px;
+        line-height: 1.5;
       }
       
       .recent-games {
@@ -30,9 +38,9 @@
       }
       
       .game {
-        background-color: #f2f2f2;
-        border-radius: 5px;
-        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+        background-color: #1c1f25;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         margin-bottom: 20px;
         padding: 20px;
         width: 45%;
@@ -40,6 +48,9 @@
       
       .game h2 {
         margin-bottom: 10px;
+        font-size: 24px;
+        font-weight: 400;
+        color: #cdd5e0;
       }
       
       .article {
@@ -50,19 +61,31 @@
         font-size: 14px;
         font-style: italic;
         margin: 5px 0;
+        color: #7f8c8d;
       }
       
       .description {
         font-size: 16px;
+        line-height: 1.5;
+        color: #cdd5e0;
+      }
+      
+      a {
+        color: #66c0f4;
+        text-decoration: none;
+      }
+      
+      a:hover {
+        text-decoration: underline;
       }
     </style>
   </head>
   <body>
     <h1>User Data</h1>
     <img src="<%= userData.userAvatar %>" alt="User Avatar">
-    <p>Username: <%= userData.userName %></p>
-    <p>Profile URL: <%= userData.userProfileURL %></p>
-    <h2>Recent Games</h2>
+    <p style = "text-align: center;">Username: <%= userData.userName %></p>
+    <a href="<%= userData.userProfileURL %>" style = "align-items: center;"><%= userData.userProfileURL %></a>
+    <h2 style = "text-align: center;">Recent Games</h2>
     <div class="recent-games">
       <% Object.entries(userData.userRecentGames).forEach(([gameName, articleObject]) => { %>
         <div class="game">
