@@ -1,17 +1,81 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>My Game Search</title>
+	<title>SteamDigest</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<style>
+		body {
+			background-color: #171a21;
+			color: #fff;
+			font-family: Arial, sans-serif;
+			font-size: 16px;
+			line-height: 1.5;
+			margin: 0;
+			padding: 0;
+		}
+		.container {
+			margin: 0 auto;
+			max-width: 600px;
+			padding: 20px;
+			text-align: center;
+		}
+		h1 {
+			font-size: 36px;
+			font-weight: 700;
+			margin-top: 40px;
+			margin-bottom: 20px;
+			text-align: center;
+			text-transform: uppercase;
+		}
+		form {
+			margin-top: 20px;
+		}
+		label {
+			display: block;
+			font-size: 20px;
+			font-weight: 700;
+			margin-bottom: 10px;
+			text-align: left;
+			text-transform: uppercase;
+		}
+		input[type="submit"] {
+			background-color: #1b2838;
+			border: none;
+			color: #fff;
+			cursor: pointer;
+			font-size: 20px;
+			font-weight: 700;
+			margin-top: 20px;
+			padding: 10px 20px;
+			text-transform: uppercase;
+			transition: background-color 0.2s ease-in-out;
+		}
+		input[type="submit"]:hover {
+			background-color: #2a475e;
+		}
+	</style>
 </head>
 <body>
-  <h1>Welcome to My Game Search</h1>
-  <form action="/search" method="GET">
-    <label for="game_name">Game Name:</label>
-    <input type="text" name="game_name" id="game_name"><br>
-    <label for="game_platform">Platform:</label>
-    <input type="text" name="game_platform" id="game_platform"><br>
-    <input type="submit" value="Search">
-  </form>
+	<div class="container">
+		<h1>Welcome to SteamDigest!</h1>
+		<p>Choose a button below to get started</p>
+		<div>
+			<form action="/register" method="get">
+				<input type="submit" value="Sign Up">
+			</form>
+			<form action="/login" method="get">
+				<input type="submit" value="Log in">
+			</form>
+
+      <form action="https://accounts.google.com/o/oauth2/v2/auth" method="get">
+        <input type="hidden" name="client_id" value="<%= client_id %>">
+        <input type="hidden" name="redirect_uri" value="<%= redirect_uri %>">
+        <input type="hidden" name="response_type" value="code">
+        <input type="hidden" name="scope" value="https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email">
+        <input type="submit" value="Sign in with Google">
+    </form>
+		</div>
+	</div>
 </body>
 </html>

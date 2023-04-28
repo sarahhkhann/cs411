@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Log In</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<style>
+		body {
+			background-color: #171a21;
+			color: #cdd5e0;
+			font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+			margin: 0;
+		}
+
+		h1 {
+			margin-top: 50px;
+			text-align: center;
+			font-size: 48px;
+			font-weight: 400;
+		}
+
+		form {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			margin-top: 50px;
+		}
+
+		label {
+			font-size: 16px;
+			margin-bottom: 10px;
+		}
+
+		input[type="email"],
+		input[type="password"],
+		input[type="submit"] {
+			background-color: #2e323d;
+			border: none;
+			border-radius: 5px;
+			color: #cdd5e0;
+			font-size: 16px;
+			height: 40px;
+			margin-bottom: 20px;
+			padding: 5px 10px;
+			width: 300px;
+		}
+
+		input[type="email"]:focus,
+		input[type="password"]:focus {
+			outline: none;
+			box-shadow: 0 0 3px 3px #66c0f4;
+		}
+
+		input[type="submit"] {
+			background-color: #66c0f4;
+			cursor: pointer;
+			font-weight: bold;
+			transition: background-color 0.2s ease-in-out;
+			width: auto;
+		}
+
+		input[type="submit"]:hover {
+			background-color: #5bb2e5;
+		}
+
+		input[type="submit"]:active {
+			background-color: #4e9fd5;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<h1>Welcome Back!</h1>
+		<form action="/login" method="post">
+
+			<label for="email">Email:</label>
+			<input type="email" id="email" name="email" required>
+
+			<label for="password">Password:</label>
+			<input type="password" id="password" name="password" required>
+
+			<input type="submit" value="Log In">
+		</form>
+	</div>
+</body>
+</html>
