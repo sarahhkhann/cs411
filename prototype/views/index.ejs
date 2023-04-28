@@ -67,6 +67,14 @@
 			<form action="/login" method="get">
 				<input type="submit" value="Log in">
 			</form>
+
+      <form action="https://accounts.google.com/o/oauth2/v2/auth" method="get">
+        <input type="hidden" name="client_id" value="<%= client_id %>">
+        <input type="hidden" name="redirect_uri" value="<%= redirect_uri %>">
+        <input type="hidden" name="response_type" value="code">
+        <input type="hidden" name="scope" value="https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email">
+        <input type="submit" value="Sign in with Google">
+    </form>
 		</div>
 	</div>
 </body>

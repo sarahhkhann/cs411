@@ -34,8 +34,42 @@ app.get('/login', function(req, res) {
 });
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////Google OAuth///////////////////////////////////////////////////////
+// define route for homepage
+app.get('/', (req, res) => {
+  const client_id = '49445260514-bvouskakjlmctdsm3o341arcoid6fqts.apps.googleusercontent.com'; // 'your_client_id
+  const redirect_uri = 'http://localhost:3000/auth/google/callback';
+  res.render('index', { client_id, redirect_uri});
+});
 
+// define route for Google authentication callback
+app.get('/auth/google/callback', async (req, res) => {
+  const code = req.query.code;
+
+  // exchange the authorization code for an access token
+  const { access_token } = fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: new URLSearchParams({
+      code: code,
+      client_id: GOOGLE_CLIENT_ID,
+      client_secret: process.env.GOOGLE_CLIENT_SECRET,
+      redirect_uri: 'http://localhost:3000/auth/google/callback',
+      grant_type: 'authorization_code'
+    })
+  }).then(res => res.json());
+  // use the access token to retrieve the user's profile information
+  const { email, given_name, family_name } = fetch('https://www.googleapis.com/oauth2/v1/userinfo', {
+    headers: {
+      'Authorization': `Bearer ${access_token}`
+    }
+  }).then(res => res.json());
+  res.render('profile');
+});
+
+  
 
 //////////////////////////////////////////////////////DATABASE////////////////////////////////////////////////////////
 const sqlite3 = require('sqlite3').verbose();
