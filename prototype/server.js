@@ -210,7 +210,7 @@ async function RetrieveUserData(steam_id){
   //retrieve user data, profile pic, name, etc...
   try{
     const userSummary = await steam.getUserSummary(steam_id);
-    output.userAvatar = userSummary.avatar.medium;
+    output.userAvatar = userSummary.avatar.large;
     output.userName = userSummary.nickname;
     output.userProfileURL = userSummary.url;
     //console.log(userSummary);
@@ -290,7 +290,7 @@ app.post('/steam', async (req, res) => {
   const userData = await RetrieveUserData(steam_id);
   
   // Render the EJS template with the retrieved user data
-  res.render('user', { userData: userData });
+  res.render('steam', { userData: userData });
 });
 
 // start server
