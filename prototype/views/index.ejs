@@ -4,13 +4,63 @@
 	<title>SteamDigest</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="/stylesheets/style.css">
+	<style>
+		body {
+			background-color: #171a21;
+			color: #fff;
+			font-family: Arial, sans-serif;
+			font-size: 16px;
+			line-height: 1.5;
+			margin: 0;
+			padding: 0;
+		}
+		.container {
+			margin: 0 auto;
+			max-width: 600px;
+			padding: 20px;
+			text-align: center;
+		}
+		h1 {
+			font-size: 36px;
+			font-weight: 700;
+			margin-top: 40px;
+			margin-bottom: 20px;
+			text-align: center;
+			text-transform: uppercase;
+		}
+		form {
+			margin-top: 20px;
+		}
+		label {
+			display: block;
+			font-size: 20px;
+			font-weight: 700;
+			margin-bottom: 10px;
+			text-align: left;
+			text-transform: uppercase;
+		}
+		input[type="submit"] {
+			background-color: #1b2838;
+			border: none;
+			color: #fff;
+			cursor: pointer;
+			font-size: 20px;
+			font-weight: 700;
+			margin-top: 20px;
+			padding: 10px 20px;
+			text-transform: uppercase;
+			transition: background-color 0.2s ease-in-out;
+		}
+		input[type="submit"]:hover {
+			background-color: #2a475e;
+		}
+	</style>
 </head>
 <body>
 	<div class="container">
-		<h1><center>Welcome to SteamDigest!</center></h1>
-		<center>Choose a button below to get started</center>
-		<div style="text-align: center;">
+		<h1>Welcome to SteamDigest!</h1>
+		<p>Choose a button below to get started</p>
+		<div>
 			<form action="/register" method="get">
 				<input type="submit" value="Sign Up">
 			</form>

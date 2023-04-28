@@ -3,11 +3,83 @@
   <head>
     <meta charset="utf-8">
     <title>Profile</title>
+    <style>
+      body {
+        background-color: #171a21;
+        color: #cdd5e0;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      }
+  h1 {
+    margin-top: 50px;
+    text-align: center;
+    font-size: 48px;
+    font-weight: 400;
+  }
+  
+  p {
+    margin: 10px 0;
+    font-size: 18px;
+    line-height: 1.5;
+    text-align: center;
+  }
+  
+  a {
+    color: #66c0f4;
+    text-decoration: none;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+  }
+  
+  label {
+    font-size: 16px;
+    margin-top: 20px;
+    display: block;
+  }
+  
+  input[type=text] {
+    width: 300px;
+    height: 40px;
+    font-size: 18px;
+    border: 3px solid #66c0f4;
+    border-radius: 20px;
+    text-align: center;
+    margin-top: 10px;
+  }
+  
+  button[type=submit] {
+    width: 150px;
+    height: 50px;
+    margin-top: 20px;
+    border-radius: 30px;
+    font-size: 18px;
+    font-weight: bold;
+    background-color: #66c0f4;
+    color: #171a21;
+    border: none;
+    cursor: pointer;
+  }
+  
+  button[type=submit]:hover {
+    background-color: #1c1f25;
+    color: #66c0f4;
+  }
+</style>
   </head>
   <body>
     <div style="text-align:center;">
       <h1>Welcome to your profile!</h1>
       <p>Enter your Steam ID below to see the latest news about your favorite games:</p>
+      <a href = "https://www.steamidfinder.com/">Find your Steam ID</a>
       <br>
       <form action="/steam" method="post">
         <label for="steam-id">Steam ID:</label>
