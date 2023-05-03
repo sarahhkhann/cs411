@@ -258,11 +258,11 @@ async function RetrieveUserData(steam_id){
     for (let i = 0; i < userRecentGames.length; i++) {
       //uncomment this to get news for each game, using the other function for testing so we dont waste api calls
 
-      // const out = await RetrieveGameNews(userRecentGames[i].name);
-      // output.userRecentGames[userRecentGames[i].name] = out;
-
-      const out = await RetrieveRecentNews();
+      const out = await RetrieveGameNews(userRecentGames[i].name);
       output.userRecentGames[userRecentGames[i].name] = out;
+
+      // const out = await RetrieveRecentNews();
+      // output.userRecentGames[userRecentGames[i].name] = out;
     }
   } catch(err) {
     console.error(err);
